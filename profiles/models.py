@@ -36,4 +36,5 @@ class StudentProfile(models.Model):
         verbose_name_plural = "Профили студентов"
 
     def __str__(self):
-        return f"{self.user.get_full_name()} ({self.language})"
+        return f"{self.user.full_name} ({self.language})"
+

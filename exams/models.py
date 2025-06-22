@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from users.models import User
 
+
 class Exam(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID")
     name = models.CharField(max_length=255, verbose_name="Название экзамена")
@@ -47,7 +48,8 @@ class Question(models.Model):
 class AnswerOption(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID")
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers', verbose_name="Вопрос")
-    answer_text = models.TextField(verbose_name="Ответ")
+    answer_text = models.TextField(null=True, blank=True, verbose_name="Текст ответа")
+    answer_image = models.ImageField(upload_to='answers/', null=True, blank=True, verbose_name="Изображение ответа")
     is_correct = models.BooleanField(default=False, verbose_name="Правильный ответ")
 
     class Meta:
@@ -55,4 +57,4 @@ class AnswerOption(models.Model):
         verbose_name_plural = "Варианты ответов"
 
     def __str__(self):
-        return f"{'✔️' if self.is_correct else '❌'} {self.answer_text[:50]}"
+        return self.answer_text if self.answer_text else "🖼 Изображение"

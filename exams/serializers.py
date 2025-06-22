@@ -4,7 +4,12 @@ from .models import Exam, Question, AnswerOption
 class AnswerOptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnswerOption
-        fields = '__all__'
+        fields = ['id', 'question', 'answer_text', 'answer_image', 'is_correct']
+
+    def validate(self, data):
+        if not data.get('answer_text') and not data.get('answer_image'):
+            raise serializers.ValidationError("Необходимо указать текст или изображение ответа.")
+        return data
 
 class QuestionSerializer(serializers.ModelSerializer):
     answers = AnswerOptionSerializer(many=True, read_only=True)

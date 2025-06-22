@@ -14,5 +14,14 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(AnswerOption)
 class AnswerOptionAdmin(admin.ModelAdmin):
-    list_display = ('question', 'answer_text', 'is_correct')
+    list_display = ('question', 'answer_text', 'answer_image_preview', 'is_correct')
     list_filter = ('is_correct',)
+    search_fields = ('answer_text',)
+
+    def answer_image_preview(self, obj):
+        if obj.answer_image:
+            return f'<img src="{obj.answer_image.url}" style="height:40px;" />'
+        return "-"
+    answer_image_preview.allow_tags = True
+    answer_image_preview.short_description = "Изображение"
+

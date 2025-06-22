@@ -15,6 +15,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('role', 'ADMIN')
         return self.create_user(email, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -23,18 +24,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('ADMIN', 'Администратор'),
     )
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID")
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True, verbose_name="Email (логин)")
-    first_name = models.CharField(max_length=150, verbose_name="Имя")
-    last_name = models.CharField(max_length=150, verbose_name="Фамилия")
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, verbose_name="Роль")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата регистрации")
-    is_active = models.BooleanField(default=True, verbose_name="Активен")
-    is_staff = models.BooleanField(default=False, verbose_name="Персонал (доступ в админку)")
-
-    objects = UserManager()
+    full_name = models.CharField(max_length=255, verbose_name="ФИО")
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='STUDENT')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
+
+    objects = UserManager()
 
     class Meta:
         verbose_name = "Пользователь"
@@ -42,4 +42,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.email} ({self.get_role_display()})"
-
